@@ -1,0 +1,226 @@
+\documentclass[12pt, a4paper, twoside]{article}
+\usepackage[T1,T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,bulgarian,ukrainian,russian]{babel}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{minted}
+\usepackage{float}
+\usepackage{enumitem}
+\setlist{nolistsep, itemsep=0.3cm,parsep=0pt}
+\usepackage{geometry}
+\geometry{top=20mm}
+\geometry{bottom=20mm}
+\usepackage{csquotes}
+\usepackage{soul}
+
+
+
+\title{Взаимодействие Windows API\\
+с помощью PowerShell}
+
+\author{Боярова Елизавета}
+\date{Январь 2024}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+\begin{center}
+\tableofcontents 
+\end{center}
+
+\newpage
+\begin{center}
+\section{ОБЩИЕ СВЕДЕНИЯ}
+\subsection{Microsoft Windows API}
+\end{center}
+
+\textbf{Microsoft Windows API} — интерфейс системного программирования для операционных систем Windows. 
+Необходим для того, чтобы написанные приложения могли взаимодействовать с операционной системой.\\
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Images/1.jpg}
+\end{center}\\
+
+Windows API (Win32) ориентирован главным образом на язык программирования C, поскольку его предоставляемые функции и структуры данных описаны на этом языке в последних версиях его документации. Однако API может использоваться любым компилятором или ассемблером языка программирования, способным обрабатывать (четко определенные) низкоуровневые структуры данных вместе с предписанными соглашениями о вызовах для вызовов и обратных вызовов.
+
+\begin{center}
+\subsection{PowerShell}
+\end{center}
+
+\textbf{PowerShell} – это стандартизированная оболочка командной строки, которая открывает доступ к более гибкому управлению компьютером и его настройкам. Это та же командная строка, но с большими возможностями для конфигурирования операционных систем семейства MS Windows. Проще говоря, это своего рода универсальный инструмент администрирования. 
+В отличие от большинства оболочек, которые только принимают и возвращают текст, PowerShell принимает и возвращает объекты \definecolor{light-gray}{rgb}{0.8,0.8,0.8}
+\colorbox{light-gray}{.NET}.\\
+
+\begin{flushleft}Это решение предлагает следующие возможности:\end{flushleft}
+\begin{itemize}
+     \item надежный журнал командной строки;
+     \item заполнение нажатием клавиши TAB и подстановка команд;
+     \item поддержка псевдонимов команд и параметров;
+     \item создание конвейера для объединения команд;
+     \item система справки консоли, похожая на страницы man в Unix.
+\end{itemize}
+
+\begin{center}
+\subsection{Команды PowerShell}
+\end{center}
+\enlargethispage{3\baselineskip}
+
+Оболочка PowerShell имеет собственный набор команд, именуемый командлетами (от английского «cmdlet»). Они формируются с помощью шаблона «Глагол-Существительное», или «Действие-Объект». 
+
+Например, \textit{Get-Services} и \textit{Start-Process}.\\
+
+\begin{flushleft}
+\textbf{Основные команды языка Windows PowerShell}
+\end{flushleft}
+
+Ниже таблице перечислены основные команды PowerShell и их аналоги в *nix-подобных системах и CMD.EXE.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ | m{3cm} | m{3cm}| m{3cm} | m{3cm} | } 
+    \hline
+    Командлет (псевдоним) & Команда в \*nix & Команда в CMD.exe & Описание\\
+    \hline
+    Get-Location (pwd) & pwd &  & Выводит путь до текущего каталога\\
+    \hline
+    Set-Location (cd) & cd & cd & Меняет текущий каталог \\
+    \hline
+    Get-ChildItem (ls) & ls & dir & Выводит содержимое текущего каталога\\ 
+    \hline
+    Get-ChildItem & find & find & Производит поиск файлов по заданным критериям\\ 
+    \hline
+    Copy-Item (cp)  & cp & cp & Копирует файл\\ 
+    \hline
+    Remove-Item (rm) & rm & rm & Удаляет файл\\ 
+    \hline
+    \end{tabular}
+\end{table}
+
+\begin{center}
+\subsection{Синтаксис}
+\end{center}
+
+После имени самого командлета следует указание параметров и их значений. Между всеми частями команды следует проставлять пробелы.
+
+Пример: \textit{Set-Location -LiteralPath C:\ -PassThru}\\
+
+Разберем пример:\\
+
+\textit{Set-Location} - буквально «вызвать команду». Позволяет выполнить указанный блок сценария.\\
+
+\textit{-LiteralPath C:\ } – здесь передаем блок сценария, в котором используется команда Set-Location для перехода в каталог C:\.\\
+
+\textit{-PassThru} – по умолчанию командлет Invoke-Command не возвращает результат выполнения. Этот параметр указывает на необходимость вывода информации о местоположении, в которое был выполнен переход с помощью команды Set-Location.\\
+
+\newpage
+Регистр букв в командах PowerShell не имеет значения, команды будут выполнятся в любом регистре. Когда в одной строке объединены несколько команд, они разделяются точкой с запятой \definecolor{light-gray}{rgb}{0.8,0.8,0.8}
+\colorbox{light-gray}{;} .\\
+
+Если команда вышла слишком длинной, то для разделения на несколько строк используйте символ обратного апострофа \definecolor{light-gray}{rgb}{0.8,0.8,0.8}
+\colorbox{light-gray}{`}, вместо переноса. Новую строку можно создать, нажав \textbf{Shift + Enter} (для переноса строки ниже текущей) или \textbf{Ctrl + Enter} (для переноса строки выше текущей). \\
+
+\newpage
+\begin{center}
+\section{НАЧАЛО РАБОТЫ}
+\subsection{Как запустить PowerShell в Windows}
+\end{center}
+
+По умолчанию PowerShell уже установлен на вашем компьютере. 
+Если нет, то воспользуйтесь инструкциями для установки, предоставленными Microsoft.   
+
+Существуют два основных способа запуска PowerShell в системе Windows: 
+через меню «Пуск» и с помощью приложения «Выполнить».\\
+
+\begin{flushleft}
+    \textbf{Через меню «Пуск»}:
+\end{flushleft}\\
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Images/2.png}
+\end{center}\\
+
+\newpage
+\begin{flushleft}
+    \textbf{Через приложение «Выполнить»}:
+\end{flushleft}
+
+Используйте комбинацию клавиш \textbf{Win + R}. В появившемся окне введите powershell и нажмите кнопку \textbf{ОК}.\\
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Images/3.png}
+\end{center}\\
+
+\begin{center}
+\subsection{Взаимодействие с функциями Windows API с помощью PowerShell}
+\end{center}
+
+В Windows PowerShell существует три способа взаимодействия с функциями Windows API:\\
+\begin{itemize}
+    \item С помощью командлета \(Add-Type\) для компиляции кода C\#;
+    \item С помощью ссылки на приватный тип в .NET Framework вызвать данный метод;
+    \item С помощью рефлексии, чтобы определить метод, вызывающий функцию Windows API.
+\end{itemize}
+
+\begin{center}
+\subsection{Использование командлета Add-Type для вызова функции}
+\end{center} 
+
+Ключ к взаимодействию с функциями WinAPI через PowerShell – знать, как преобразовывать типы в С/С++ функциях в их эквиваленты в фреймворке .NET. Для этой цели используется сайт \( pinvoke.net.\) \\
+
+На сайте \( pinvoke.net \) в поисковой строке нужно указать имя искомой функции из WinAPI, например, \( CopyFile \). Результатом поиска станет сигнатура эквивалентной C\# функции:\\
+
+\begin{center}
+\textit{[DllImport(“kernel32.dll”, CharSet = CharSet.Unicode)] \\
+static extern bool CopyFile(string lpExistingFileName, \\
+string lpNewFileName, bool bFailIfExists); }
+\end{center}
+
+Далее необходимо использовать командлет \(Add-Type\) для взаимодействия с найденной C\# функцией. Этот командлет позволяет на лету скомпилировать добавленный в него C\# код.\\
+\newpage
+Добавим найденную функцию \(CopyFile\) в PowerShell скрипт:\\
+
+\begin{center}
+\textit{\$MethodDefinition = @’}
+
+
+\textit{[DllImport(“kernel32.dll”, CharSet = CharSet.Unicode)]}
+
+
+\textit{public static extern bool CopyFile(string lpExistingFileName, string lpNewFileName, bool bFailIfExists);}
+
+
+\textit{‘@}
+
+
+\textit{Add-Type -MemberDefinition \$MethodDefinition -Name ‘Kernel32’ -Namespace ‘Win32’ -PassThru}\\
+\end{center}
+
+
+Переменная \(MethodDefinition\) содержит сигнатуру функции \(CopyFile\), найденную на сайте \(pinvoke.net\) с одним изменением: функция \(CopyFile\) объявлена как \(public\), так как функции, который добавляются с помощью \(Add-Type\) должны быть публичными для облегчения взаимодействия с PowerShell.\\
+
+Далее, с помощью вызова Add-Type обеспечивается доступ к C\# коду через указание имени типа и пространства имен. После вызова Add-Type вы можете использовать новый тип в PowerShell как [Win32.Kernel32].\\
+
+
+Например, теперь можно вызвать функцию \(CopyFile\) из PowerShell с помощью команды:
+\begin{center}
+\textit{[Win32.Kernel32]::CopyFile("C:\Documents\file\_1.txt ", "C:\Documents\file\_2.txt", \$False)\\}
+\end{center}
+Эта команда скопирует файл \textbf{file\_1.txt} в файл \textbf{file\_2.txt}.\\
+
+
+Таким образом мы смогли вызвать функцию CopyFile из WinApi в PowerShell.
+
+
+
+
+
+
+
+
+\end{document}
